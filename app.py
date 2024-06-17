@@ -36,6 +36,8 @@ def login():
         session['email'] = email
         session['nombre'] = user[1]
         session['apellido'] = user[2]
+        session['tipo'] = user[4]
+
         return redirect(url_for('tasks'))
     else:
         return render_template('index.html', message=' Las credenciales no son correctas ')
@@ -67,7 +69,7 @@ def newtask():
     descripcion= request.form['descripcion']
     email = session['email']
     d = datetime.now()
-    date = d.strftime("%y-%m-%d $h:$M:%S")
+    date = d.strftime("%y-%m-%d")
 
     if titulo and descripcion and email:
        cur = mysql.connection.cursor()
@@ -76,6 +78,46 @@ def newtask():
        cur.execute(sql, data)
        mysql.connection.commit()
        return redirect(url_for('tasks'))
+   
+    
+@app.route('/new-user', methods=['GET', 'POST'])
+def newuser():
+    nombre= request.form['nombre']
+    apellido= request.form['apellido']
+    email = request.form['email']
+    tipo= request.form['tipo']
+    password= request.form['password']
+
+    if tipo == 'administrador':
+            tipo = 1
+    elif tipo == 'basico':
+            tipo = 0
+
+    if  session['tipo'] == 1:
+        cur = mysql.connection.cursor()
+        sql = "INSERT INTO usuario (nombre, apellido, email, tipo, password) VALUES (%s, %s, %s, %s, %s)"
+        data  = (nombre, apellido, email, tipo, password)
+        cur.execute(sql, data)
+        mysql.connection.commit()
+        return redirect(url_for('tasks'))
+    else:
+        return render_template('tasks.html', message='Usuario no autorizado para esta accion.')
+    
+@app.route('/delete-task', methods=['GET', 'POST'])
+def deleteTask():
+     cur = mysql.connection.cursor()
+     id = request.form['id']
+     sql = "delete from tarea where id = %s"
+     data = (id,)
+     cur.execute(sql, data)
+     mysql.connection.commit()
+     return redirect(url_for('tasks'))
+
+
+     
+    
+       
+       
 
 
 if __name__ == '__main__':

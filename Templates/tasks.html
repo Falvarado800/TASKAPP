@@ -29,10 +29,16 @@
           data-bs-toggle="modal" data-bs-target="#user-modal">
       </div>
     </div>
+    {% if message %}
+    <div class="alert alert-danger alert-dismissible fade show mt-3 role="'alert">
+      <strong>Error </strong>{{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" arial-label="close"></button>
+    </div>
+    {% endif %}
     <!-- Tareas del usuario -->
     <div class="row row-col-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-4 mt-3">
       {% for task in tasks %}
-      <div class="col-md-3">
+      <div class="col-md-3 mt-3">
         <div class="card">
           <div class="card-header">
             {{ task.titulo }}
@@ -42,7 +48,7 @@
           </div>
           <div class="card-footer d-flex justify-content-between">
             {{ task.date }}
-            <form action="#" method="POST">
+            <form action="delete-task" method="POST">
               <input type="hidden" value="{{ task.id }}" name="id">
               <button type="submit" class="btn btn-outline-danger btn-sm">Eliminar</button>
             </form>
@@ -80,7 +86,23 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            ...
+            <form action="/new-user" method="POST">
+              <label>Nombre</label>
+              <input type="text" class="form-control mb-3" name="nombre">
+              <label>Apellido</label>
+              <input type="text" class="form-control mb-3" name="apellido">
+              <label>email</label>
+              <input type="text" class="form-control mb-3" name="email">
+              <label>password</label>
+              <input type="password" class="form-control mb-3" name="password">
+              <label>Tipo de Usuario:</label><br>
+              <input type="radio" id="administrador" name="tipo" value="administrador" required>
+              <label for="administrador">Administrador</label><br>
+      
+              <input type="radio" id="basico" name="tipo" value="basico" required>
+              <label for="basico">Básico</label><br><br>
+              <button type="submit" class="btn btn-primary w-100 mt-3">Guardar</button>
+            </form>
           </div>
         </div>
       </div>
